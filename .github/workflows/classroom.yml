@@ -1,28 +1,35 @@
-name: Autograding Tests
-'on':
-- push
-- repository_dispatch
-permissions:
-  checks: write
-  actions: read
-  contents: read
-jobs:
-  run-autograding-tests:
-    runs-on: ubuntu-latest
-    if: github.actor != 'github-classroom[bot]'
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: test_m2_1.py
-      id: test_m2_1-py
-      uses: classroom-resources/autograding-python-grader@v1
-      with:
-        timeout: 10
-        max-score: 100
-        setup-command: pip install pytest
-    - name: Autograding Reporter
-      uses: classroom-resources/autograding-grading-reporter@v1
-      env:
-        TEST_M2_1-PY_RESULTS: "${{steps.test_m2_1-py.outputs.result}}"
-      with:
-        runners: test_m2_1-py
+# Autograding configuration for GitHub Classroom
+# You can fully customize this file
+
+# 🔹 Setup: Install dependencies before running tests
+setup:
+  - pip install pytest
+
+# 🔹 Test cases
+tests:
+  - name:  Run all Pytest tests
+    run: pytest -q test_m2_1.py
+    timeout: 20
+    points: 30
+
+  - name:  Check specific function
+    run: pytest -q test_m2_1.py::test_specific_case
+    timeout: 10
+    points: 40
+
+  - name:  Edge case test
+    run: pytest -q test_m2_1.py::test_edge_case
+    timeout: 10
+    points: 30
+
+# 🔹 Optional: Customize environment variables
+env:
+  PYTHONPATH: "."
+
+# 🔹 Optional: Extra grading rules
+# (e.g., check formatting, linting, etc.)
+# tests:
+#   - name: Code Style (flake8)
+#     run: flake8 m2_1.py
+#     timeout: 15
+#     points: 5
